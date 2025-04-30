@@ -1,4 +1,4 @@
-
+# Till nästa gång: få ett rum att fungera och skriv starten till spelet. Exempelvis att det ber om namnet på din karaktär
 def main_game_loop()
     cashmoneycash=0
     power=1
