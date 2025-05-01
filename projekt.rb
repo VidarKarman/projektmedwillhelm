@@ -126,7 +126,9 @@ def steal()
             gamestate = "stop"
         end
     else
-
+        foundcash = rand(10..20)
+        puts "you stole #{foundcash} cashmoneycash"
+        cashmoneycash+=foundcash
     end
 end
 def fight(enemy_name, hp, damage)
