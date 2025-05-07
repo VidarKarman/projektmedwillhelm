@@ -1,4 +1,4 @@
-# Till nästa gång: inget bestämt
+# Till nästa gång: willhelm löser fight vidar löser klart shop och steal samt room 1 
 
 def start()
     puts"Welcome to the game \"the vertically challenged wizard\""
@@ -112,7 +112,8 @@ def fight(enemy_name, enemy_hp, damage)
     if rand(1..10*$dodge_chance) == 1
         puts "#{enemy_name} missed his attack!"
         puts "Choose an attack: melee, FIREBALL, climb"
-
+#CLimb- Högre altitud men större risk för miss
+# Fireball scalear med altitud, melee är konstant
     end
 
     if $hp <= 0 
