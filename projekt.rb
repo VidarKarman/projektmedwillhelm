@@ -24,7 +24,6 @@ def room1()
     if  stealstate=="yes"
     steal()
     end
-    puts ""
     fight()
 
 end
@@ -35,11 +34,10 @@ def shop()
     puts" Shopkeeper - Welcome to the shop!"
     puts "Your current stats are:"
     puts "power:#{$power}"
-    puts "altitude:#{altitude}" 
-    puts "altitude:#{altitude}" 
-    puts "hp:#{hp}"  
-    puts "dodge chance:#{dodge_chance}"  
-    puts"HP: energy drink: 10 $cashmoneycash (+5 power) \nALTITUDE BOOSTERS: footstool: 13 $cashmoneycash (+40cm altitude) shoe lifts: 6 $cashmoneycash (+15cm altitude) \n ITEMS: rollerblades: 14 $cashmoneycash (+0.3 dodge chance)" 
+    puts "altitude:#{$altitude}" 
+    puts "hp:#{$hp}"  
+    puts "dodge chance:#{$dodge_chance}"  
+    puts"HP: energy drink: 10 cashmoneycash (+5 power) \nALTITUDE BOOSTERS: footstool: 13 cashmoneycash (+40cm altitude) shoe lifts: 6 cashmoneycash (+15cm altitude) \n ITEMS: rollerblades: 14 cashmoneycash (-0.3 dodge chance)" 
     puts"Shopkeeper - What would you like to purchase?"
     purchase = gets.chomp
     if purchase == "energy drink"
@@ -59,7 +57,7 @@ def shop()
             $cashmoneycash = $cashmoneycash + 13
             return
         end
-        altitude = altitude + 40
+        $altitude = $altitude + 40
     elsif purchase == "rollerblades"
         $cashmoneycash = $cashmoneycash - 14
         if $cashmoneycash <= 0 
@@ -68,7 +66,7 @@ def shop()
             $cashmoneycash = $cashmoneycash + 14
             return
         end
-        dodge_chance = dodge_chance + 0.3
+        $dodge_chance = $dodge_chance - 0.3
     elsif purchase == "shoe lifts"
         $cashmoneycash = $cashmoneycash - 8
         if $cashmoneycash <= 0 
@@ -77,7 +75,7 @@ def shop()
             $cashmoneycash = $cashmoneycash + 8
             return
         end
-        altitude = altitude + 15
+        $altitude = $altitude + 15
     end
     return 
 end
@@ -97,7 +95,7 @@ def steal()
            restart_input=gets.chomp
         end
         if restart_input == "no"
-            gamestate = "stop"
+            $gamestate = "stop"
         end
     else
         found_cash = rand(10..20)
@@ -110,29 +108,31 @@ end
 def fight(enemy_name, enemy_hp, damage)
     puts "You have encountered #{enemy_name}!"
     puts "Enemy: hp = #{enemy_hp} dmg = #{damage}"
-    puts "You: hp = #{hp} dmg = #{altitude*$power}"
-    puts ""
+    puts "You: hp = #{$hp} dmg = #{$altitude*$power}"
+    if rand(1..10*$dodge_chance) == 1
+        puts "#{enemy_name} missed his attack!"
+        puts "Choose an attack: melee, FIREBALL, climb"
 
+    end
 
-
-    if hp <= 0 
-        gamestate = "stop"
+    if $hp <= 0 
+        $gamestate = "stop"
     end
 end
 $cashmoneycash=1
 $power=1
-hp=444
-base_altitude=1.49
-altitude=1.49
-room=1
-dodge_chance=0.2
-gamestate="go"
+$hp=444
+$base_altitude=1.49
+$altitude=1.49
+$room=1
+$dodge_chance=0.8
+$gamestate="go"
 shop()
 #start()
 room1()
-if room==2
+if $room==2
     room2()
-elsif room==3
+elsif $room==3
     room3()
 end
 shop()
