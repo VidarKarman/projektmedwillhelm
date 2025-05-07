@@ -9,9 +9,6 @@ def main_game_loop()
     dodge_chance=0.2
     gamestate="go"
     
-    #Sleight of hand 1-10 att misslyckas, Kan rulla en gång varje rum
-    #Lyckas: Få mellan 10-20 cashmoneycash 
-    #Misslyckas: Börja om spelet 
     while gamestate == "go"
         start()
         if room==1
