@@ -37,9 +37,10 @@ def shop()
     puts "altitude:#{$altitude}" 
     puts "hp:#{$hp}"  
     puts "dodge chance:#{$dodge_chance}"  
-    puts"HP: energy drink: 10 cashmoneycash (+5 power) \nALTITUDE BOOSTERS: footstool: 13 cashmoneycash (+40cm altitude) shoe lifts: 6 cashmoneycash (+15cm altitude) \n ITEMS: rollerblades: 14 cashmoneycash (-0.3 dodge chance)" 
+    puts"HP: energy drink: 10 cashmoneycash (+5 power) \nALTITUDE BOOSTERS: footstool: 13 cashmoneycash (+40cm altitude) shoe lifts: 6 cashmoneycash (+15cm altitude) \n ITEMS: rollerblades: 14 cashmoneycash (+0.3 dodge chance)" 
     puts"Shopkeeper - What would you like to purchase?"
     purchase = gets.chomp
+    while purchase != "energy drink" && purchase !="footstool" && purchase != "shoe lifts" && purchase != "rollerblades"
     if purchase == "energy drink"
         $cashmoneycash = $cashmoneycash - 10
         if $cashmoneycash <= 0 
@@ -68,11 +69,11 @@ def shop()
         end
         $dodge_chance = $dodge_chance - 0.3
     elsif purchase == "shoe lifts"
-        $cashmoneycash = $cashmoneycash - 8
+        $cashmoneycash = $cashmoneycash - 6
         if $cashmoneycash <= 0 
             puts"Unable to purchase due to insufficient funds" 
             puts"Shopkeeper - GET OUT OF MY SHOP YOU DWARF SCOUNDREL!"
-            $cashmoneycash = $cashmoneycash + 8
+            $cashmoneycash = $cashmoneycash + 6
             return
         end
         $altitude = $altitude + 15
@@ -90,7 +91,7 @@ def steal()
         puts"your attempt at stealing has failed and you were thrown out onto the street. GAME OVER"
         puts"if you want to play again input yes, otherwise input no"
         restart_input=gets.chomp
-        while restart_input != "yes" || restart_input != "no" 
+        while restart_input != "yes" && restart_input != "no" 
            puts"Incorrect input. Your input had the #{start_input.class} class and was #{start_input}. if you want to play again input yes, otherwise input no"
            restart_input=gets.chomp
         end
@@ -109,9 +110,12 @@ def fight(enemy_name, enemy_hp, damage)
     puts "You have encountered #{enemy_name}!"
     puts "Enemy: hp = #{enemy_hp} dmg = #{damage}"
     puts "You: hp = #{$hp} dmg = #{$altitude*$power}"
-    if rand(1..10*$dodge_chance) == 1
-        puts "#{enemy_name} missed his attack!"
-        puts "Choose an attack: melee, FIREBALL, climb"
+    if rand(1..10) <= 10*$dodge_chance
+        puts "#{enemy_name} missed their attack!"
+    else
+        puts "your were hit and took #{damage} damage. Your hp = #{$hp}"
+    end
+    puts "Choose an attack: melee, FIREBALL, climb"
 #CLimb- Högre altitud men större risk för miss
 # Fireball scalear med altitud, melee är konstant
     end
@@ -126,7 +130,7 @@ $hp=444
 $base_altitude=1.49
 $altitude=1.49
 $room=1
-$dodge_chance=0.8
+$dodge_chance=0.2
 $gamestate="go"
 shop()
 #start()
