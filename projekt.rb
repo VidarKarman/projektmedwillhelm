@@ -1,5 +1,12 @@
 # Till nästa gång: willhelm löser fight vidar löser klart shop och steal samt room 1 
-
+$cashmoneycash=1
+$power=1
+$hp=444
+$base_altitude=1.49
+$altitude=1.49
+$room=1
+$dodge_chance=0.2
+$gamestate="go"
 def start()
     puts"Welcome to the game \"the vertically challenged wizard\""
     puts"Input the word \"gibb\" to begin"
@@ -106,16 +113,30 @@ def steal()
     end
     return 
 end
+def dodgecheck(chance_to_dodge, incoming_damage, enemy_name)
+    if rand(1..10) <= 10*chance_to_dodge
+        puts "The attack from #{enemy_name} was dodged"
+        return true
+    else
+        puts "The attack from #{enemy_name} hits #{$character_name} and damages him for #{incoming_damage} damage "
+        $hp -= incoming_damage
+        puts "#{$character_name}s hp is now #{$hp}"
+        return false
+    end
+end
 def fight(enemy_name, enemy_hp, damage)
     puts "You have encountered #{enemy_name}!"
     puts "Enemy: hp = #{enemy_hp} dmg = #{damage}"
     puts "You: hp = #{$hp} dmg = #{$altitude*$power}"
-    if rand(1..10) <= 10*$dodge_chance
-        puts "#{enemy_name} missed their attack!"
-    else
-        puts "your were hit and took #{damage} damage. Your hp = #{$hp}"
+    while $hp >0 && enemy_hp > 0
+        puts "#{enemy_name} attacks you for #{damage}"
+        if !dodgecheck($dodge_chance, damage, enemy_name) && rand(1..4)<=3
+            puts "#{enemy_name} attacks you again because your were caught by the first for #{damage/2} damage" 
+            $hp -= damage/2
+            puts "#{$character_name}s hp is now #{$hp}"
+        end
+        puts "Choose an attack: melee, FIREBALL, climb"
     end
-    puts "Choose an attack: melee, FIREBALL, climb"
 #CLimb- Högre altitud men större risk för miss
 # Fireball scalear med altitud, melee är konstant
     end
@@ -124,14 +145,7 @@ def fight(enemy_name, enemy_hp, damage)
         $gamestate = "stop"
     end
 end
-$cashmoneycash=1
-$power=1
-$hp=444
-$base_altitude=1.49
-$altitude=1.49
-$room=1
-$dodge_chance=0.2
-$gamestate="go"
+
 shop()
 #start()
 room1()
