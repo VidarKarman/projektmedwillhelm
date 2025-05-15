@@ -5,13 +5,13 @@ $bought_shoe_lifts = false
 $bought_rollerblades = false
 $cashmoneycash=1
 $power=10
-$hp=444
-$base_altitude=1.49
-$altitude=1.49
+$hp=50
+$base_altitude=1.5
+$altitude=1.5
 $room=1
 $dodge_chance=0.2
 def start()
-    puts"Welcome to the game \"the vertically challenged wizard\""
+    puts"Welcome to \"the vertically challenged wizard\""
     puts"Input the word \"gibb\" to begin"
     start_input=gets.chomp
     while start_input != "gibb" 
@@ -63,38 +63,40 @@ def room2()
     end
 
 end
+
 def shop()
     puts" Shopkeeper - Welcome to the shop!"
     puts "Your current stats are:"
     puts "power:#{$power}"
-    puts "altitude:#{$altitude}" 
+    puts "altitude:#{$altitude}m" 
     puts "hp:#{$hp}"  
     puts "dodge chance:#{$dodge_chance}"
-        if $bought_energy_drink == true
-            energy_drink = ""
-        else 
-            energy_drink = "POWER: energy drink: 10 cashmoneycash (+5power)"
-        end
-        if $bought_footstool == true
-            footstool = ""
-        else 
-          footstool = "footstool: 13 cashmoneycash (+40cm altitude)"
-        end
-        if $bought_shoe_lifts == true
-            shoe_lifts = ""
-        else 
-          shoe_lifts = "shoe lifts: 5 cashmoneycash (+15cm altitude)"
-        end
-        if $bought_footstool == true && $bought_shoe_lifts == true
-            altitude_boosters = ""
-        else 
-            altitude_boosters = "ALTITUDE_BOOSTERS:"
-        end
-        if $bought_rollerblades == true
-            rollerblades = ""
-        else 
-        rollerblades = "AGIlItY: rollerblades: 14 cashmoneycash (+0.3 dodge chance)"
-        end
+    if $bought_energy_drink == true
+        energy_drink = ""
+    else 
+        energy_drink = "POWER: energy drink: 10 cashmoneycash (+5power)"
+    end
+    if $bought_footstool == true
+        footstool = ""
+    else 
+        footstool = "footstool: 13 cashmoneycash (+40cm altitude)"
+    end
+    if $bought_shoe_lifts == true
+        shoe_lifts = ""
+    else 
+        shoe_lifts = "shoe lifts: 5 cashmoneycash (+15cm altitude)"
+    end
+    if $bought_footstool == true && $bought_shoe_lifts == true
+        altitude_boosters = ""
+    else 
+        altitude_boosters = "ALTITUDE_BOOSTERS:"
+    end
+    if $bought_rollerblades == true
+        rollerblades = ""
+    else 
+    rollerblades = "AGILITY: rollerblades: 14 cashmoneycash (+0.3 dodge chance)"
+    end
+    
     puts"#{energy_drink} \n#{altitude_boosters} #{footstool} #{shoe_lifts} \n #{rollerblades}" 
     puts"Shopkeeper - What would you like to purchase?"
     purchase = gets.chomp
@@ -104,7 +106,7 @@ def shop()
         puts"Shopkeeper - What would you like to purchase?"
         purchase = gets.chomp
     end
-    if purchase == "energy drink"
+    if purchase == "energy drink" && $bought_energy_drink == false
         $cashmoneycash = $cashmoneycash - 10
         if $cashmoneycash <= 0 
             puts"Unable to purchase due to insufficient funds" 
@@ -115,7 +117,7 @@ def shop()
         puts "You purchased the energy drink! Power: #{$power} cashmoneycash: #{$cashmoneycash}" 
         $power = $power + 5
         $bought_energy_drink = true
-    elsif purchase == "footstool"
+    elsif purchase == "footstool" && $bought_footstool == false
         $cashmoneycash = $cashmoneycash - 13
         if $cashmoneycash <= 0 
             puts"Unable to purchase due to insufficient funds" 
@@ -123,10 +125,10 @@ def shop()
             $cashmoneycash = $cashmoneycash + 13
             return
         end
-        puts "You purchased the footstool! Power: #{$altitude} cashmoneycash: #{$cashmoneycash}"
+        puts "You purchased the footstool! Altitude: #{$altitude} cashmoneycash: #{$cashmoneycash}"
         $altitude = $altitude + 0.4
-        $bought_foot_stool = true
-    elsif purchase == "rollerblades" 
+        $bought_footstool = true
+    elsif purchase == "rollerblades" && $bought_rollerblades == false
         $cashmoneycash = $cashmoneycash - 14
         if $cashmoneycash <= 0 
             puts"Unable to purchase due to insufficient funds" 
@@ -135,10 +137,10 @@ def shop()
             return
         end
         puts "You purchased the roller blades! Power: #{$dodge_chance} cashmoneycash: #{$cashmoneycash}"
-        $dodge_chance = $dodge_chance - 0.3
+        $dodge_chance = $dodge_chance + 0.3
         $bought_rollerblades = true
-    elsif purchase == "shoe lifts"
-        $cashmoneycash = $cashmoneycash - 6
+    elsif purchase == "shoe lifts" && $bought_shoe_lifts == true
+        $cashmoneycash = $cashmoneycash - 5
         if $cashmoneycash <= 0 
             puts"Unable to purchase due to insufficient funds" 
             puts"Shopkeeper - GET OUT OF MY SHOP YOU DWARF SCOUNDREL!"
@@ -160,16 +162,29 @@ def room3()
         stealstate=gets.chomp
     end
     if  stealstate=="yes"
-    steal()
+        steal()
     end
     if $hp <= 0 
         return
     end
-    fight()
-    if $hp <= 0 
-        return
+    puts "You have found a way to sneak past the next enemy. Wanna risk it?"
+    puts "Yes or No?"
+    answer = gets.chomp
+    while answer != "Yes" || answer != "No"
+        puts "Incerrect input. Your input was #{answer}. Wanna risk it? Input Yes or No"
     end
-
+    if answer == "Yes"
+        sneak()
+        if sneak == false 
+            fight(MegaMAN, 80, 25)
+        elsif sneak == true
+            room4()
+    elsif answer == "No"
+        fight()
+        if $hp <= 0 
+            return
+        end
+    end
 end
 def room4()
     puts "You find yourself in room 4, which has lots of ways to gain money (many people to steal from)"
@@ -190,25 +205,35 @@ def room4()
         return
     end
 end
-def steal()
+# Beskrivning:         One of ten times nothing is returned and $hp i changed to 0. Nine of ten times argument1 is added with a random number between 10 and 20 and then returned.
+# Argument 1:          Integer  a positive integer 
+# Return:              none or Integer 
+# Exempel:         
+# steal(10) #=> nil ($hp=0) {1 out of 10 times}
+# <==> #=> a random integer between and including 20 and 30 {9 out of 10 times}
+# steal(-1) #=> nil ($hp=0) {1 out of 10 times}
+# <==> #=> a random integer between and including 9 and 19 {9 out of 10 times}        
+# Datum:               2025-05-15
+# Namn:                Vidar Karman
+def steal(current_cash)
     if rand(1..10)==1
         puts"your attempt at stealing has failed and you were thrown out onto the street. GAME OVER"
         $hp = 0
-    else
-        found_cash = rand(10..20)
-        puts "you stole #{found_cash} cashmoneycash"
-        $cashmoneycash=$cashmoneycash+found_cash
+        return
     end
+    found_cash = rand(10..20)
+    puts "you stole #{found_cash} cashmoneycash"
+    return current_cash+found_cash
 end
 
-# Beskrivning:  The function returns true or false randomly but it returns true with the decimal probability of the firt argument
+# Beskrivning:  The function returns true or false randomly but it returns true with the decimal probability of the first argument
 # Argument 1:    Float   a number between 0 and 1 representing the decimal probability for the return being true
-# Return:       Bool  
+# Return:       Bool
 # Exempel:         
 #     dodgecheck(0.8)  #=> returns true 80% of the time
 #     dodgecheck(0.5)  #=> returns true 50% of the time      
 # Datum:  2025-05-10                
-# Namn: Vidar Karman   
+# Namn: Wilhelm Liljegren   
 def dodgecheck(chance_to_dodge)
     if rand(1..10) <= 10*chance_to_dodge
         return true
@@ -221,7 +246,7 @@ end
 # Return:       Integer/Float  the number after a random integer between 0 and the number divided by 4 has been subtracted from it
 # Exempel:         
 #     playerdamage(20)          #=>  an integer between 15 and 20
-#     playerdamage(4.8)          #=> an fleat between 2.8 and 4.8
+#     playerdamage(4.8)          #=> a float between 2.8 and 4.8
 # 
 #              
 # Datum:  2025-05-10                
@@ -287,6 +312,27 @@ def fight(enemy_name, enemy_hp, damage)
         return
     end
 end
+# Beskrivning:         Sneaking attempt based on the players altitude. If successful the player escapes, else a fight begins
+# Argument 1:          A variable overridden by the global variable $altitude
+# Return:              Bool
+# Exempel:         
+# sneak(1.50)          #=> returns true 47.5% of the time
+# sneak (1.80)         #=> return true 37% of the time       
+# Datum:               2025-05-15
+# Namn:                Wilhelm Liljegren
+
+def sneak(current_altitude)
+   if rand(1..10) <= 3.5*current_altitude
+    puts "You have been caught!"
+    puts "Prepare to FIGHT!"
+    return false
+   else 
+    puts "You managed to escape!"
+   end
+   return true
+end
+
+
 def main_game_function()
     start()
     if $hp <= 0 
@@ -304,7 +350,7 @@ def main_game_function()
        room2()
        if $hp <= 0 
         return
-    end
+       end
     elsif $room==3
         room3()
         if $hp <= 0 
@@ -314,14 +360,17 @@ def main_game_function()
     shop()
     if $hp <= 0 
         return
+
     end
     room4()
     if $hp <= 0 
         return
     end
 end
-
+$cashmoneycash=60
+while true
 shop()
+end
 #main_game_function()
 if $hp > 0 
     puts"As #{$character_name} reaches the top of the building he is delighted. It's altitude commpared to the surroundings is great"
