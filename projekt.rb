@@ -5,7 +5,7 @@ $bought_shoe_lifts = false
 $bought_rollerblades = false
 $cashmoneycash=1
 $power=10
-$hp=50
+$hp=150
 $base_altitude=1.5
 $altitude=1.5
 $room=1
@@ -18,13 +18,18 @@ def start()
         puts"Incorrect input. Your input was #{start_input}. Input the word \"gibb\" to begin. "
         start_input=gets.chomp
     end
-    puts"info om trollkarlen och updraget an är på"
-    puts"You the vertically challenged wizard. What is your name"
+    puts"MISSION: To get to the top of the tower and to TOWER over your abnormally tall foes!"
+    puts "Your starting stats are:"
+    puts "Altitude    :#{$base_altitude} "
+    puts "HP          : #{$hp}"
+    puts "Power       : #{$power}"
+    puts "Dodge_chance: #{$dodge_chance}"
+    puts"You the vertically challenged wizard. State your name"
     $character_name=gets.chomp
 end
 
 def room1()
-    puts "You find yourself in room 1, which has lots of ways to gain money (many people to steal from)"
+    puts "You find yourself on floor 1, which has lots of ways to gain money (many people to steal from)"
     puts"DO YOU WANNA STEAL? input yes or no"
     stealstate=gets.chomp
     while stealstate != "yes" && stealstate != "no"
@@ -32,19 +37,21 @@ def room1()
         stealstate=gets.chomp
     end
     if  stealstate=="yes"
-    steal()
+        $cashmoneycash+=steal($cashmoneycash)
     end
     if $hp <= 0 
         return
     end
-    fight()
+    puts "You find a security guard in your way to the next floor. He notices you and shouts: -PREPARE FOR BATTLE LITTLE ONE!"
+    fight("security guard", 30, 10)
     if $hp <= 0 
         return
     end
+    puts "After defeating the security guard you continue your vertical ascent ."
 
 end
 def room2()
-    puts "You find yourself in room 2, which has lots of ways to gain money (many people to steal from)"
+    puts "You find yourself on floor 2, which has a surprising amount of wallets lying on the floor"
     puts"DO YOU WANNA STEAL? input yes or no"
     stealstate=gets.chomp
     while stealstate != "yes" && stealstate != "no"
@@ -52,16 +59,29 @@ def room2()
         stealstate=gets.chomp
     end
     if  stealstate=="yes"
-    steal()
+        $cashmoneycash+=steal($cashmoneycash)
     end
     if $hp <= 0 
         return
     end
-    fight()
-    if $hp <= 0 
-        return
+    puts"After stealing a couple of wallets an old lady appears from behind the door and demands that you put them back if you want to proceed"
+    puts"Do you put all your wallets back? input yes or no"
+    input=gets.chomp
+    while input != "yes" && input != "no"
+        puts"Incorrect input. Your input was #{input}. DO YOU WANNA STEAL? input yes or no"
+        input=gets.chomp
     end
-
+    if input == "yes"
+        puts"after giving up the wallets, the old lady allows you to proceed"
+        $cashmoneycash=0
+    else 
+        fight("old lady", 40, 8)
+        if $hp <= 0 
+            return
+        end
+        puts"After having bested the old lady in battle the path to the stairs is clear"
+    end
+    return
 end
 
 def shop()
@@ -127,6 +147,7 @@ def shop()
         end
         puts "You purchased the footstool! Altitude: #{$altitude} cashmoneycash: #{$cashmoneycash}"
         $altitude = $altitude + 0.4
+        $base_altitude=$base_altitude+0.4
         $bought_footstool = true
     elsif purchase == "rollerblades" && $bought_rollerblades == false
         $cashmoneycash = $cashmoneycash - 14
@@ -149,91 +170,113 @@ def shop()
         end
         puts "You purchased the shoe lifts! Power: #{$altitude} cashmoneycash: #{$cashmoneycash}"
         $altitude = $altitude + 0.15
+        $base_altitude=$base_altitude+0.15
         $bought_shoe_lifts = true
     end
     return 
 end
 def room3()
-    puts "You find yourself in room 3, which has lots of ways to gain money (many people to steal from)"
-    puts"DO YOU WANNA STEAL? input yes or no"
-    stealstate=gets.chomp
-    while stealstate != "yes" && stealstate != "no"
-        puts"Incorrect input. Your input was #{stealstate}. DO YOU WANNA STEAL? input yes or no"
-        stealstate=gets.chomp
-    end
-    if  stealstate=="yes"
-        steal()
-    end
-    if $hp <= 0 
-        return
-    end
-    puts "You have found a way to sneak past the next enemy. Wanna risk it?"
-    puts "Yes or No?"
+    puts "You find yourself on floor 3, which has what looks like a shop"
+    puts "You think that you may be able to sneak past the shop. It looks friendly enough."
+    puts"Do you wanna sneak past or enter? input sneak or enter"
     answer = gets.chomp
-    while answer != "Yes" || answer != "No"
-        puts "Incerrect input. Your input was #{answer}. Wanna risk it? Input Yes or No"
+    while answer != "sneak" && answer != "enter"
+        puts "Incorrect input. Your input was #{answer}. Do you wanna sneak past or enter? input sneak or enter"
+        answer = gets.chomp
     end
-    if answer == "Yes"
-        sneak()
-        if sneak == false 
-            fight(MegaMAN, 80, 25)
-        elsif sneak == true
-            room4()
-    elsif answer == "No"
-        fight()
-        if $hp <= 0 
+    if answer == "sneak"
+        if sneak($base_altitude)
+            puts"you manage to sneak past the shopkeeper without being detected and you climb up the stairs"
+            return
+        else
+            fight("shopkeeper", 50,18)
             return
         end
+    elsif answer == "enter"
+        shop()
+        puts"With the shopkeeper being aware of your presence there is no longer a way to sneak past him. Your only option to get to the next floor is to fight. "
+        puts"You walk into the shop again and try to start a fight but the shopkeeper punches first"
+        fight("shopkeeper", 50,18)
+        return
     end
 end
 def room4()
-    puts "You find yourself in room 4, which has lots of ways to gain money (many people to steal from)"
-    puts"DO YOU WANNA STEAL? input yes or no"
-    stealstate=gets.chomp
-    while stealstate != "yes" && stealstate != "no"
-        puts"Incorrect input. Your input was #{stealstate}. DO YOU WANNA STEAL? input yes or no"
-        stealstate=gets.chomp
-    end
-    if  stealstate=="yes"
-    steal()
-    end
-    if $hp <= 0 
-        return
-    end
-    fight()
-    if $hp <= 0 
-        return
-    end
+    puts "You find yourself on floor 4, which has lots of ways to gain money (many people to steal from)"
+    puts "But something catches your eye"
+    puts "A wallet begging to get stolen. Its seams suffering from all the hard cold cash it is carrying"
+    puts "A wallet no man (including manlets such as yourself) could not resist stealing"
+    puts "As your hand tightens around the money a boxing glove acquaints itself with your face"
+    puts "ENTER: Mike Tyson"
+    puts "Merry chrithmith to me I gueth: The behemoth of a man (yes, even Mike Tyson is taller than you) says as he squares up for a game of dice"
+    puts "The ruleth are thimple. Both will roll two dithe each. The one with the biggeth number gets to punch the other in the fathe"
+    dice_game()
+    return
 end
-# Beskrivning:         One of ten times nothing is returned and $hp i changed to 0. Nine of ten times argument1 is added with a random number between 10 and 20 and then returned.
-# Argument 1:          Integer  a positive integer 
-# Return:              none or Integer 
+# Beskrivning:         50% chans att vinna, 50% chans att förlora och $hp=0
+# Argument 1:          Inga argument tas emot
+# Return:              Nil. Huvudsakliga syfte är att skriva ut text och ändra en global tillståndsvariabel
 # Exempel:         
-# steal(10) #=> nil ($hp=0) {1 out of 10 times}
-# <==> #=> a random integer between and including 20 and 30 {9 out of 10 times}
-# steal(-1) #=> nil ($hp=0) {1 out of 10 times}
-# <==> #=> a random integer between and including 9 and 19 {9 out of 10 times}        
+#                      dice_game()
+#                      => 
+#                      You: 4 + 1
+#                      Mike Tyson: 7 + 8
+#                      Prepare to die you thort excuthe of a man
+#                      GAME OVER!
+#                      (eller)
+#                      Prepare to die you thort excuthe of a man
+#                      In the last second you duck and sprint past Mike Tyson to get to the top floor
+#                      Mission complete! You are now the highest man in the building. YOU WIN!            
+# Datum:               2025-05-16
+# Namn:                Wilhelm Liljegren
+
+def dice_game()
+    puts "You: 4 + 1"
+    puts "Mike Tyson: 7 + 8"
+    if rand(1..2) == 1
+        puts "Prepare to die you thort excuthe of a man"
+        puts "GAME OVER!"
+        $hp = 0
+    else
+        puts "Prepare to die you thort excuthe of a man"
+        puts "In the last second you duck and sprint past Mike Tyson to get to the top floor"
+        puts "Mission complete! You are now the highest man in the building. YOU WIN!"
+    end
+    return
+end
+# Beskrivning:         Försöker stjäla pengar. 10 % chans att misslyckas, vilket leder till att spelarens HP blir 0.
+#                      Vid lyckad stöld returneras ett belopp mellan 10 och 20.
+# Argument 1:          current_cash: Integer – spelarens nuvarande pengar (kan vara negativt)
+# Return:              Integer eller nil – summan av current_cash och stöldbelopp, eller nil vid misslyckande
+# Exempel:         
+# steal(10)   #=> nil (10 % chans), annars t.ex. 28
+# steal(-1)   #=> nil (10 % chans), annars t.ex. 14
+# steal(0)    #=> nil (10 % chans), annars t.ex. 13
+# steal(50)   #=> nil (10 % chans), annars t.ex. 67
 # Datum:               2025-05-15
 # Namn:                Vidar Karman
+
 def steal(current_cash)
     if rand(1..10)==1
-        puts"your attempt at stealing has failed and you were thrown out onto the street. GAME OVER"
         $hp = 0
-        return
+        return 0
     end
     found_cash = rand(10..20)
     puts "you stole #{found_cash} cashmoneycash"
     return current_cash+found_cash
 end
 
-# Beskrivning:  The function returns true or false randomly but it returns true with the decimal probability of the first argument
-# Argument 1:    Float   a number between 0 and 1 representing the decimal probability for the return being true
-# Return:       Bool
+
+# Beskrivning:         Returnerar true eller false baserat på sannolikheten att undvika en attack.
+# Argument 1:          chance_to_dodge: Float – sannolikheten (0.0–1.0) att undvika en attack
+# Return:              Boolean – true med sannolikheten chance_to_dodge, annars false
 # Exempel:         
-#     dodgecheck(0.8)  #=> returns true 80% of the time
-#     dodgecheck(0.5)  #=> returns true 50% of the time      
-# Datum:  2025-05-10                
-# Namn: Wilhelm Liljegren   
+# dodgecheck(0.8)  #=> true i 80 % av fallen
+# dodgecheck(0.5)  #=> true i 50 % av fallen
+# dodgecheck(0.2)  #=> true i 20 % av fallen
+# dodgecheck(1.0)  #=> alltid true
+# Datum:               2025-05-10
+# Namn:                Wilhelm Liljegren
+
 def dodgecheck(chance_to_dodge)
     if rand(1..10) <= 10*chance_to_dodge
         return true
@@ -241,18 +284,20 @@ def dodgecheck(chance_to_dodge)
     return false
 end
 
-# Beskrivning:  A positive number is subtracted by a random integer between 0 and the number divided by 4
-# Argument 1:    Integer/Float the number which will be subtracted from 
-# Return:       Integer/Float  the number after a random integer between 0 and the number divided by 4 has been subtracted from it
+# Beskrivning:         Returnerar damage efter att (0 till damage/4) dragits bort.
+# Argument 1:          damage: Integer/Float – maximalt skadevarde
+# Return:              Integer/Float – ett värde mellan 0.75 × damage och damage
 # Exempel:         
-#     playerdamage(20)          #=>  an integer between 15 and 20
-#     playerdamage(4.8)          #=> a float between 2.8 and 4.8
-# 
-#              
-# Datum:  2025-05-10                
-# Namn: Vidar Karman                 
+# playerdamage(20)   #=> ett heltal mellan 15 och 20
+# playerdamage(4.8)  #=> ett flyttal mellan ca 3.6 och 4.8
+# playerdamage(100)  #=> ett tal mellan 75 och 100
+# playerdamage(8)    #=> ett tal mellan 6 och 8
+# Datum:               2025-05-10
+# Namn:                Vidar Karman
+
 def playerdamage(damage)
-    return damage-rand(0..(damage/4.0).to_i)
+    damage=damage-rand(0..(damage/4.0).to_i)
+    return damage
 end
 
 def fight(enemy_name, enemy_hp, damage)
@@ -281,12 +326,13 @@ def fight(enemy_name, enemy_hp, damage)
         if $hp <= 0 
             return
         end
-        puts "#{$character_name} gains initiative and can now climb(altitude+1) or attack with melee(#{$power} dmg, guaranteed hit) or fireball(#{$altitude*$power} dmg, may miss)"
+        puts "#{$character_name} gains initiative and can now climb(altitude+1) or attack with melee(#{$power} dmg(power), guaranteed hit) or fireball(#{$altitude*$power}(altitude*power) dmg, may miss)"
         puts "Choose an action: melee, fireball or climb"
         input=gets.chomp
         while input!="melee" && input!="fireball" && input!="climb"
             puts"invalid input"
             puts "Choose an action: melee, fireball or climb"
+            input=gets.chomp
         end
         if input == "melee"
             dmg=playerdamage($power).to_i
@@ -303,24 +349,27 @@ def fight(enemy_name, enemy_hp, damage)
                 puts"the fireball missed #{enemy_name}"
             end
         else
-            puts"#{$character_name} climb higher. new altitude: #{$altitude+1}"
+            puts"#{$character_name} climb higher. new altitude: #{$altitude+1}m"
             $altitude+=1
         end
     end
+    $altitude=$base_altitude
     if enemy_hp <= 0 
         puts"the fight was won"
         return
     end
 end
-# Beskrivning:         Sneaking attempt based on the players altitude. If successful the player escapes, else a fight begins
-# Argument 1:          A variable overridden by the global variable $altitude
-# Return:              Bool
+
+# Beskrivning:         Försöker smyga förbi en fiende. Chansen att bli upptäckt är proportionell mot spelarens höjd.
+# Argument 1:          current_altitude: Float – spelarens nuvarande höjd
+# Return:              Bool – true om smygförsöket lyckas, false om spelaren blir upptäckt
 # Exempel:         
-# sneak(1.50)          #=> returns true 47.5% of the time
-# sneak (1.80)         #=> return true 37% of the time       
+# sneak(1.50)   #=> true i ca 47.5 % av fallen
+# sneak(1.80)   #=> true i ca 37 % av fallen
+# sneak(0.50)   #=> true i ca 82.5 % av fallen
+# sneak(3.0)    #=> true i ca 5 % av fallen   
 # Datum:               2025-05-15
 # Namn:                Wilhelm Liljegren
-
 def sneak(current_altitude)
    if rand(1..10) <= 3.5*current_altitude
     puts "You have been caught!"
@@ -342,51 +391,23 @@ def main_game_function()
     if $hp <= 0 
         return
     end
-    shop()
+    room2()
     if $hp <= 0 
         return
     end
-    if $room==2
-       room2()
-       if $hp <= 0 
-        return
-       end
-    elsif $room==3
-        room3()
-        if $hp <= 0 
-            return
-        end
-    end
-    shop()
+    room3()
     if $hp <= 0 
         return
-
     end
     room4()
     if $hp <= 0 
         return
-    end
-end
-$cashmoneycash=60
-while true
-shop()
-end
-#main_game_function()
-if $hp > 0 
-    puts"As #{$character_name} reaches the top of the building he is delighted. It's altitude commpared to the surroundings is great"
-    puts"GAME OVER you won"
-else
-    puts"GAME OVER you lost and got killed"
+    end  
 end
 
-#start()
-#room1()
-#shop()
-#if $room==2
-#   room2()
-#elsif $room==3
-#    room3()
-#end
-#shop()
-#room4()
+main_game_function()
+if $hp <= 0 
+    puts"GAME OVER!"
+end
+
 
